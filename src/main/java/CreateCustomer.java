@@ -11,5 +11,10 @@ public class CreateCustomer {
 		}
 		else
 			System.out.println("Customer " + customer.getFirstname() + " " + customer.getLastname() + " created!");
+		Customer customer1 = new Customer("", "Bill", "Gates");
+		String s = customer1.getCheckDataError();
+		System.out.println("===>"+s.length());
 	}
+
+	
 }

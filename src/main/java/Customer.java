@@ -1,5 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import utils.StringUtils;
 
@@ -20,14 +22,14 @@ public class Customer {
 	public Customer(String id, String firstname, String lastname) {
 		super();
 		this.id = id;
-		this.firstname = lastname;
+		this.firstname = firstname;
 		this.lastname = lastname;
 	}
 
 	public Customer(String id, String firstname, String lastname, String telephone, String street1, String street2, String city , String 	state , String zipcode , String country, String mail) {
 		this(id,firstname,lastname);
 		 this.telephone = telephone; 
-		 this.street1 =  
+		 this.street1 =  street1;
 		 this.street2 = street2 ;
 		 this.city = city;
 		 this.state  = state;
@@ -114,7 +116,7 @@ public class Customer {
 
 
 	public boolean checkData() {
-		if(!checkId(id) && !StringUtils.isEmptyOrNull(firstname) &&  !StringUtils.isEmptyOrNull(lastname)
+		if(checkId(id) && !StringUtils.isEmptyOrNull(firstname) &&  !StringUtils.isEmptyOrNull(lastname)
 				&& !StringUtils.isEmptyOrNull(telephone)&&  !StringUtils.isEmptyOrNull(street1) && !StringUtils.isEmptyOrNull(street2)
 				&& !StringUtils.isEmptyOrNull(city) && !StringUtils.isEmptyOrNull(state) && !StringUtils.isEmptyOrNull(zipcode) 
 				&& !StringUtils.isEmptyOrNull(country) && !StringUtils.isEmptyOrNull(mail))
@@ -124,17 +126,20 @@ public class Customer {
 	
 	public String getCheckDataError() {
 		if(StringUtils.isEmptyOrNull(this.id))
-			return this.id;
+			return "Invalid id";
 		if(StringUtils.isEmptyOrNull(this.firstname))
-			return this.firstname;
+			return "Invalid first name";
 		if(StringUtils.isEmptyOrNull(this.lastname))
-			return this.lastname;
+			return "Invalid last name";
 		return null;
 	}
 	
 	
 	public boolean checkMail() {
-		return true;
+		Pattern VALID_EMAIL_ADDRESS_REGEX = 
+			    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(this.mail);
+        return matcher.matches();
 	}
 	
 	public static Customer find(String id) {
@@ -146,13 +151,28 @@ public class Customer {
 	
 	public static boolean remove(String id) {
 		Customer customer= Customer.find(id);
-		Customer.remove(customer.id);
+		if(customer == null) {
+			return false;
+		}
+		Customer.customers.remove(customer.id);
 		return true;
 	}
 	
 	public static boolean insert(Customer customer) {
 		Customer.customers.put(customer.id,customer);
 		return true;
+	}
+	
+
+	private int getUniqueId() {
+		String s = null;
+		int result = 0;
+		do {
+			result = (int) (Math.random() * 100000);
+			s = Integer.toString(result);
+			if ( Customer.find(s) == null )
+				return result;
+		} while ( true );
 	}
 
 
