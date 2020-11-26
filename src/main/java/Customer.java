@@ -1,10 +1,10 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import utils.StringUtils;
 
 public class Customer {
-	public static List<Customer> customers = new ArrayList<Customer>();
+	public static Map<String,Customer> customers = new HashMap<String,Customer>();
 	private String id;
 	private String firstname;
 	private String lastname;
@@ -138,17 +138,20 @@ public class Customer {
 	}
 	
 	public static Customer find(String id) {
-	//	find customer in list and return it
+		if(Customer.customers.containsKey(id)) {
+			return Customer.customers.get(id);
+		}
 		return null;
 	}
 	
 	public static boolean remove(String id) {
-	//	delete customer from list;
+		Customer customer= Customer.find(id);
+		Customer.remove(customer.id);
 		return true;
 	}
 	
 	public static boolean insert(Customer customer) {
-	//	delete customer from list;
+		Customer.customers.put(customer.id,customer);
 		return true;
 	}
 
